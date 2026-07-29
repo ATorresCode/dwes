@@ -1,0 +1,49 @@
+site_name: Desarrollo web en entorno servidor
+# docs_dir: md
+# site_dir: docs
+theme:
+   name: 'material'
+   features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+   font:
+    text: 'Roboto, sans-serif'
+    code: 'Courier New, monospace'
+   icon:
+    repo: 'fontawesome/brands/github'
+   palette:
+    - scheme: default
+      toggle:
+          icon: material/brightness-7 
+          name: Canvia a mode oscur
+
+    - scheme: slate
+      toggle:
+          icon: material/brightness-4
+          name: Canvia a mode clar
+   logo: img/favicon.ico
+   favicon: img/favicon.ico
+
+nav:
+    - Home: index.md
+    - UD01:
+      - Introducción: u01/index.md
+extra_css:
+  - css/style.css
+extra_templates:
+plugins:
+  - search
+  # - with-pdf
+  # - pdf-export:
+  #     combined: true
+  # - page-to-pdf
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
