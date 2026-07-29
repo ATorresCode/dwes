@@ -24,12 +24,12 @@ Bienvenido al módulo de Desarrollo Web en Entorno Servidor (DWES).
 
 Aprenderás a:
 
-- Desarrollar aplicaciones web dinámicas.
-- Utilizar PHP.
-- Trabajar con sesiones y autenticación.
-- Acceder a bases de datos.
-- Aplicar arquitecturas modernas de desarrollo web.
+* Desarrollar aplicaciones web dinámicas.
+* Utilizar PHP.
+* Trabajar con sesiones y autenticación.
+* Acceder a bases de datos.
+* Aplicar arquitecturas modernas de desarrollo web.
 
 ## Unidades didácticas
 
-Próximamente...
+Próximamente
