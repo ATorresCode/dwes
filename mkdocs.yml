@@ -1,4 +1,5 @@
-site_name: Desarrollo web en entorno servidor
+site_name: Desarrollo Web en Entorno Servidor
+site_url: https://atorrescode.github.io/dwes/
 # docs_dir: md
 # site_dir: docs
 theme:
