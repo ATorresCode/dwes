@@ -28,8 +28,18 @@ theme:
 
 nav:
     - Home: index.md
-    - UD01:
-      - Introducción: u01/index.md
+    - U01:
+        - 1.1 - Arquitectura web y entorno profesional: u01/index.md
+        - 1.2 - Propuesta de arquitectura web: u01/propuesta.md
+        - 1.3 - Propuesta ampliada de arquitectura web: u01/propuesta-ampliada.md
+    - UD02. Fundamentos de programación en servidor: u02/index.md
+    - UD03. Generación dinámica y plantillas: u03/index.md
+    - UD04. Formularios, estado y sesiones: u04/index.md
+    - UD05. Arquitectura MVC y separación de lógica: u05/index.md
+    - UD06. Acceso a bases de datos y CRUD: u06/index.md
+    - UD07. Servicios Web y APIs REST: u07/index.md
+    - UD08. Integración con cliente y aplicaciones híbridas: u08/index.md
+    - UD09. Proyecto final y despliegue: u09/index.md
 extra_css:
   - css/style.css
 extra_templates:
