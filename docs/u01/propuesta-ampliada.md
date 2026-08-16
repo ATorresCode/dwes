@@ -1,142 +1,64 @@
-# Propuesta ampliada de arquitectura web para UD01
-
-Esta propuesta explica los conceptos fundamentales, los modelos de renderizado y las arquitecturas backend que los alumnos deben conocer para desarrollar aplicaciones web modernas.
+# UD01: Programación web en el servidor
 
 ---
 
-## 1. Fundamentos de la arquitectura web
+## 1. Modelo cliente-servidor
 
-Este primer bloque define términos que se usan a lo largo de todo el contenido. El objetivo es que el alumno comprenda el papel de cada elemento antes de ver los modelos y las arquitecturas concretas.
+El modelo cliente-servidor es la base de la web. Un **cliente** (navegador) solicita recursos a un **servidor**, que procesa la petición y devuelve una respuesta. La comunicación se realiza mediante el protocolo **HTTP** o su versión segura **HTTPS**, usando direcciones **URL**.
 
-### 1.1 Cliente y servidor
-
-Una aplicación web se basa en una comunicación entre dos actores principales:
-
-- **Cliente**: habitualmente un navegador como <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/googlechrome.svg" alt="Chrome" width="18" style="vertical-align:middle; margin-right:4px;"> Chrome, <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/firefox.svg" alt="Firefox" width="18" style="vertical-align:middle; margin-right:4px;"> Firefox o <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/microsoftedge.svg" alt="Edge" width="18" style="vertical-align:middle; margin-right:4px;"> Edge.
-- **Servidor**: un servicio que recibe peticiones, procesa datos y devuelve respuestas.
-
-El cliente y el servidor se comunican usando el protocolo **HTTP** o su versión segura **HTTPS**. Cada mensaje se envía a través de una **URL** y un método como `GET`, `POST`, `PUT` o `DELETE`.
-
-### 1.2 HTML
-
-**HTML** (HyperText Markup Language) define la estructura del contenido que el navegador muestra. Una página HTML contiene etiquetas como `h1`, `p`, `ul`, `table` y `form` para organizar información.
-
-Ejemplo simple de HTML:
-
-```html
-<h1>DWES</h1>
-<p>Aplicación web basada en arquitecturas modernas.</p>
+```mermaid
+graph LR
+  Cliente[Cliente] -->|HTTP / HTTPS| Servidor[Servidor]
+  Servidor -->|Consulta| BaseDatos[(Base de datos)]
+  Servidor -->|Respuesta| Cliente
 ```
 
-### 1.3 CSS
+- El **cliente** habitualmente un navegador como Chrome ![Chrome](https://api.iconify.design/logos:chrome.svg), Firefox ![Firefox](https://api.iconify.design/logos:firefox.svg) o Edge ![Edge](https://api.iconify.design/logos:microsoft-edge.svg), solicita recursos y muestra contenido, a partir de código HTML, CSS y JavaScript.
+- El **servidor** procesa las peticiones y devuelve contenido, habitualmente HTML, JSON o archivos estáticos.
 
-**CSS** (Cascading Style Sheets) describe el aspecto visual. CSS controla colores, fuentes, márgenes, distribución en columnas y la adaptación a pantallas móviles.
+Pasos en la petición de una página web:
 
-Ejemplo básico de CSS:
+- El usuario introduce una URL o hace clic en un enlace.
+- El navegador envía una petición HTTP al servidor.
+- El servidor procesa la petición, consulta la base de datos si es necesario y genera una respuesta
+- El navegador recibe la respuesta y renderiza la página para el usuario.
 
-```css
-body {
-  font-family: Arial, sans-serif;
-  background: #f7f7f7;
-}
+Cada interacción del usuario puede generar nuevas peticiones al servidor, que pueden ser síncronas (recargando la página) o asíncronas (actualizando parte del contenido sin recargar).
+
+## 2. Aplicaciones web estáticas y dinámicas
+
+### 2.1 Web estática
+
+Una **web estática** sirve HTML, CSS y JavaScript desde el servidor sin modificar el contenido entre peticiones.
+
+```mermaid
+sequenceDiagram
+  participant Usuario
+  participant Navegador
+  participant Servidor
+  Usuario->>Navegador: solicita página
+  Navegador->>Servidor: GET /index.html
+  Servidor-->>Navegador: HTML/CSS/JS
+  Navegador-->>Usuario: muestra página
 ```
 
-### 1.4 JavaScript
+Las páginas estáticas son rápidas y fáciles de servir, pero no cambian según el usuario o los datos. Solo varían si se actualiza el archivo en el servidor. Son adecuadas para sitios informativos, blogs simples o landing pages.
 
-**JavaScript** añade comportamiento a la página. Permite escuchar eventos, modificar el contenido en el navegador y realizar peticiones a APIs.
+Ventajas y características principales:
 
-Ejemplo de JavaScript en el cliente:
+- El contenido se almacena en archivos finales (.html, .css, .js, imágenes) y se sirve tal cual al cliente.
+- No es necesario programar para crear contenidos básicos; basta con editar los archivos.
+- Consumen menos recursos en el servidor y suelen ofrecer mejor rendimiento y SEO cuando el contenido no varía.
+- Útiles para secciones que no requieren interacción ni datos dinámicos: contacto, términos, información estática.
 
-```js
-document.querySelector("button").addEventListener("click", () => {
-  console.log("Botón pulsado");
-});
-```
+Limitaciones:
 
-### 1.5 DOM
+- Imposible personalizar contenido por usuario o por contexto sin generar páginas adicionales.
+- Actualización manual cuando cambia la información, lo que incrementa mantenimiento si hay mucho contenido.
 
-El **DOM** (Document Object Model) es la representación en memoria del documento HTML. JavaScript puede leer y modificar el DOM para cambiar la página sin recargarla completamente.
+## 2.2 Web dinámica
 
-### 1.6 JSON
-
-**JSON** (JavaScript Object Notation) es un formato de datos ligero y legible. Se usa habitualmente para enviar información entre cliente y servidor.
-
-Ejemplo de JSON:
-
-```json
-{
-  "producto": "Camiseta",
-  "precio": 19.99,
-  "disponible": true
-}
-```
-
-### 1.7 API y REST
-
-Una **API** define cómo pedir y recibir datos. En el desarrollo web, una **API REST** utiliza URLs y métodos HTTP para representar recursos y operaciones.
-
-Los métodos más habituales son:
-
-- `GET`: obtener datos.
-- `POST`: crear un nuevo recurso.
-- `PUT` / `PATCH`: actualizar datos existentes.
-- `DELETE`: borrar un recurso.
-
-Una API REST bien diseñada separa el contrato de datos (JSON) de la implementación interna del servidor.
-
-### 1.8 Frameworks y librerías
-
-Un **framework** es un conjunto de herramientas que define una forma concreta de construir aplicaciones. Una **librería** es un conjunto de funciones reutilizables que el desarrollador usa donde las necesite.
-
-Ejemplos: <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/react.svg" alt="React" width="18" style="vertical-align:middle; margin-right:4px;"> React, <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/vue-dot-js.svg" alt="Vue" width="18" style="vertical-align:middle; margin-right:4px;"> Vue, <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/django.svg" alt="Django" width="18" style="vertical-align:middle; margin-right:4px;"> Django 
-y <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/next-dot-js.svg" alt="Next.js" width="18" style="vertical-align:middle; margin-right:4px;"> Next.js. Un framework establece patrones de trabajo y una arquitectura inicial.
-
-### 1.9 SEO
-
-**SEO** (Search Engine Optimization) es la práctica de hacer que el contenido sea más fácil de encontrar en buscadores. En web se logra con HTML correcto, metadatos, velocidad de carga y contenido indexable.
-
-Un modelo con buen SEO entrega HTML legible para los robots de búsqueda desde la primera carga.
-
-### 1.10 Caché y cookies
-
-La **caché** almacena recursos para que el navegador o un servidor intermedio no tengan que descargarlos de nuevo cada vez. Una caché bien configurada mejora el rendimiento.
-
-Las **cookies** son pequeños datos que el servidor guarda en el navegador. Permiten mantener sesiones, recordar preferencias y gestionar autenticación.
-
-### 1.11 CDN y HTTPS
-
-Un **CDN** (Content Delivery Network) distribuye recursos estáticos como imágenes y scripts desde nodos cercanos al usuario. Esto reduce la latencia y mejora la velocidad global.
-
-**HTTPS** cifra la información entre cliente y servidor. En aplicaciones modernas es obligatorio, porque protege datos de usuarios y mejora la confianza de buscadores.
-
----
-
-## 2. Historia y evolución de la web
-
-Para comprender los modelos de renderizado es útil seguir una línea temporal de hitos históricos. Cada modelo se desarrolló para resolver problemas técnicos y de experiencia de usuario.
-
-### 2.1 Hitos clave
-
-- 1991: se publica HTML y las primeras páginas son estáticas.
-- 1995: aparece JavaScript y el navegador empieza a soportar interactividad.
-- 1995-2000: los servidores usan PHP, JSP y ASP para generar HTML dinámico.
-- 2000: AJAX introduce llamadas asíncronas sin recargar la página.
-- 2010: nacen las primeras SPA como AngularJS y las aplicaciones de una sola página.
-- 2013: React populariza componentes declarativos en el cliente.
-- 2015: aparece el interés por SSR para mejorar SEO y rendimiento inicial.
-- 2020: el enfoque headless se consolida para separar frontend y backend.
-
----
-
-## 3. Modelos de renderizado
-
-Cada modelo describe dónde se genera el HTML y cómo se actualiza la interfaz en el cliente. La elección influye en SEO, rendimiento, experiencia y complejidad de desarrollo.
-
-### 3.1 MPA (Multi-Page Application)
-
-En una MPA, cada vez que el usuario navega a una nueva página, el navegador solicita una URL distinta y recibe HTML completo del servidor.
-
-Este modelo se asocia con los primeros sitios web de los años 90 y los sistemas de gestión de contenidos que siguen construyendo páginas en servidor.
+Una **web dinámica** construye contenido en el servidor en cada petición, usando datos de una base de datos o lógica del servidor.
 
 ```mermaid
 sequenceDiagram
@@ -144,561 +66,451 @@ sequenceDiagram
   participant Navegador
   participant Servidor
   participant BaseDatos
+  Usuario->>Navegador: solicita página
+  Navegador->>Servidor: GET /productos
+  Servidor->>BaseDatos: consulta productos
+  BaseDatos-->>Servidor: devuelve datos
+  Servidor-->>Navegador: HTML/CSS/JS con datos
+  Navegador-->>Usuario: muestra página
+```
 
+Las páginas dinámicas permiten personalización, interacción y actualización de datos en tiempo real. Son adecuadas para tiendas online, redes sociales o aplicaciones web complejas.
+
+Características y funcionamiento:
+
+- El servidor ejecuta código en lenguajes como PHP, Python, Java, Node.js, etc., y genera HTML al vuelo.
+- El contenido puede depender de la hora, del usuario autenticado, de acciones previas o de consultas a bases de datos.
+- Al recibir la petición el servidor analiza el archivo solicitado (por ejemplo index.php), ejecuta el código del lenguaje de servidor, accede a la base de datos o a otros recursos y construye el HTML que finalmente se envía al cliente.
+
+Extensiones y ejemplos:
+
+- Archivos típicos: .php, .py, .js (Node), .jsp, .asp.
+- Adecuadas para comercios electrónicos, blogs con gestión de usuarios, paneles de administración (back-office) y aplicaciones con lógica de negocio.
+
+Inconvenientes:
+
+- Mayor complejidad de desarrollo y mayor consumo de recursos en el servidor.
+- Requieren cuidado adicional para SEO y rendimiento (cache, optimización de consultas, etc.).
+
+## 2.3 Comparación entre web estática y dinámica
+
+| Característica | Web estática | Web dinámica |
+| --- | --- | --- |
+| Contenido | Fijo, no cambia entre peticiones | Generado al vuelo, puede variar según usuario, hora o datos |
+| Lenguajes | HTML, CSS, JS | PHP, Python, Node.js, Java, etc. |
+| Base de datos | No requiere | Requiere para almacenar y recuperar datos |
+| Rendimiento | Rápida, menos carga en servidor | Más lenta, depende de la lógica y consultas |
+| SEO | Fácil de optimizar | Requiere cuidado adicional (renderizado, metaetiquetas dinámicas) |
+| Mantenimiento | Simple, editar archivos | Más complejo, requiere gestión de código y base de datos |
+| Casos de uso | Blogs simples, landing pages, portafolios | Tiendas online, redes sociales, aplicaciones web interactivas |
+
+## 3. Definiciones clave
+
+- **HTML**: lenguaje de marcado que estructura una página.
+
+  ```html
+  <h1>Mi página</h1>
+  <p>Bienvenido al sitio.</p>
+  ```
+
+- **CSS**: hojas de estilo que definen el aspecto visual.
+
+  ```css
+  body {
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+  }
+  ```
+
+- **JavaScript**: lenguaje que añade comportamiento e interactividad en el navegador.
+
+  ```js
+  document.querySelector('button').addEventListener('click', () => {
+    alert('¡Has pulsado el botón!');
+  });
+  ```
+
+- **DOM**: representación en memoria del árbol de elementos HTML.
+
+  ```js
+  const titulo = document.getElementById('titulo');
+  titulo.textContent = 'Nuevo título';
+  ```
+
+- **Framework**: conjunto de herramientas y librerías que facilitan el desarrollo de aplicaciones web, proporcionando estructura y funcionalidades predefinidas.
+
+- **Frontend**: parte de la aplicación que se ejecuta en el cliente (navegador) y que interactúa con el usuario. Consiste en HTML, CSS y JavaScript, y puede usar frameworks como React, Vue o Angular.
+
+  ```jsx
+  import React, { useState } from 'react';
+
+  function PulsaBoton() {
+    const [count, setCount] = useState(0);
+    return (
+      <button onClick={() => setCount(count + 1)}>
+        Pulsado {count} {count === 1 ? 'vez' : 'veces'}
+      </button>
+    );
+  }
+
+  export default PulsaBoton;
+  ```
+
+![Frontend](./frontend.png)
+
+- **Backend**: parte de la aplicación que se ejecuta en el servidor y que procesa datos, lógica y almacenamiento. Puede estar implementado en PHP, Python, Node.js, Java, etc., y suele usar frameworks como Laravel, Django, Express o Spring.
+
+  ```js
+  // Node.js / Express
+  app.get('/api/mensaje', (req, res) => {
+    res.json({ mensaje: 'Hola desde el servidor' });
+  });
+  ```
+
+- **Full Stack**: desarrollador o aplicación que abarca tanto frontend como backend.
+
+- **Backoffice**: interfaz de administración de la aplicación, generalmente accesible solo para usuarios autorizados.
+
+![Backoffice](./backoffice.png)
+
+- **HTTP**: protocolo de comunicación entre cliente y servidor. Utiliza métodos para indicar la acción deseada y códigos de estado para informar del resultado.
+  Los métodos HTTP más utilizados son:
+
+    - **GET**: solicitar un recurso. Seguro y sin efecto secundario (idempotente cuando no altera estado).
+    - **POST**: enviar datos al servidor para crear un recurso o procesar información (no idempotente).
+    - **PUT**: reemplazar o crear un recurso en una ubicación concreta (idempotente).
+    - **PATCH**: aplicar modificaciones parciales a un recurso (no necesariamente idempotente).
+    - **DELETE**: eliminar un recurso (idempotente en la práctica cuando el recurso desaparece).
+
+  Los rangos de códigos de estado son:
+
+    - 1xx Informativos: indican comunicación en progreso (100 Continue, ...).
+    - 2xx Éxito: la petición se completó correctamente (200 OK, 201 Created, 204 No Content, ...).
+    - 3xx Redirecciones: se requiere acción adicional para completar la petición (301 Moved Permanently, 302 Found, ...).
+    - 4xx Errores del cliente: la petición es incorrecta o no autorizada (400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, ...).
+    - 5xx Errores del servidor: fallo en el servidor al procesar la petición (500 Internal Server Error, 502 Bad Gateway, 503 Service Unavailable, ...).
+
+  Las respuestas incluyen un código de estado que indica el resultado y, opcionalmente, un cuerpo con más información.
+
+- **JSON**: formato de datos ligero usado para intercambiar información, consistente en pares clave-valor.
+
+  ```json
+  {
+    "productos": [
+      {
+        "producto": "Camiseta",
+        "precio": 19.99
+      },
+      {
+        "producto": "Pantalones",
+        "precio": 39.99
+      }
+    ]
+  }
+  ```
+
+- **API REST**: interfaz que permite al Frontend comunicarse con el Backend para intercambiar recursos en formato JSON mediante el protocolo HTTP.
+
+  Ejemplo de petición:
+  
+  ```http
+  GET /api/productos HTTP/1.1
+  Host: ejemplo.com
+  ```
+
+  Ejemplo de respuesta:
+
+  ```http
+  HTTP/1.1 200 OK
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 48
+
+  {
+    "productos": [
+      { "id": 1, "nombre": "Camiseta", "precio": 19.99 },
+      { "id": 2, "nombre": "Pantalones", "precio": 39.99 }
+    ]
+  }
+  ```
+
+---
+
+## 4. Comunicación síncrona vs. asíncrona y AJAX
+
+En la web tradicional, la comunicación entre cliente y servidor es **síncrona**. Cuando el usuario realiza una acción (por ejemplo, enviar un formulario o hacer clic en un enlace), el navegador bloquea la interfaz, realiza la petición y espera a que el servidor devuelva un documento HTML completo para recargar toda la página.
+
+```mermaid
+sequenceDiagram
+  participant Usuario
+  participant Navegador
+  participant Servidor
   Usuario->>Navegador: clic en enlace
-  Navegador->>Servidor: GET /pagina
-  Servidor->>BaseDatos: consulta datos
-  BaseDatos-->>Servidor: devuelve datos
+  Navegador->>Servidor: GET /ruta
   Servidor-->>Navegador: HTML completo
-  Navegador-->>Usuario: muestra la página
+  Navegador-->>Usuario: muestra página
 ```
 
-#### Características de MPA
-
-- El servidor controla el renderizado de la página.
-- El cliente recibe HTML listo para mostrar.
-- La navegación recarga el documento entero.
-- Es adecuado para sitios con contenido estático o formularios tradicionales.
-
-#### Ejemplos de tecnologías
-
-Un sitio MPA puede construirse con frameworks como <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/laravel.svg" alt="Laravel" width="18" style="vertical-align:middle; margin-right:4px;"> Laravel, <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/django.svg" alt="Django" width="18" style="vertical-align:middle; margin-right:4px;"> Django o <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/dot-net.svg" alt="ASP.NET" width="18" style="vertical-align:middle; margin-right:4px;"> ASP.NET MVC.
-
-#### Ejemplo de código — MPA (Express + EJS)
-
-```js
-// server.js
-const express = require('express');
-const app = express();
-app.set('view engine', 'ejs');
-
-app.get('/productos', async (req, res) => {
-  const productos = await db.query('SELECT * FROM productos');
-  res.render('productos', { productos });
-});
-
-app.listen(3000);
-```
-
-Plantilla `productos.ejs`:
-
-```html
-<ul>
-  <% productos.forEach(p => { %>
-    <li><%= p.nombre %> - <%= p.precio %> €</li>
-  <% }); %>
-</ul>
-```
-
-### 3.2 SPA (Single Page Application)
-
-El modelo SPA surgió con aplicaciones que querían comportarse como software de escritorio. El navegador carga una sola página inicial y el resto de la navegación se realiza en el cliente.
-
-Esta idea ganó impulso con librerías como <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/angular.svg" alt="AngularJS" width="18" style="vertical-align:middle; margin-right:4px;"> AngularJS y más tarde con <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/react.svg" alt="React" width="18" style="vertical-align:middle; margin-right:4px;"> React.
-
-```mermaid
-sequenceDiagram
-  participant Usuario
-  participant Navegador
-  participant Aplicacion
-  participant API
-  participant BaseDatos
-
-  Usuario->>Navegador: carga inicial
-  Navegador->>Aplicacion: descarga HTML/JS/CSS
-  Aplicacion->>API: GET /api/datos
-  API->>BaseDatos: consulta
-  BaseDatos-->>API: devuelve datos
-  API-->>Aplicacion: JSON
-  Aplicacion-->>Usuario: actualiza la interfaz
-```
-
-#### Características de SPA
-
-- El cliente gestiona el enrutado y la actualización de vistas.
-- El servidor actúa principalmente como proveedor de datos.
-- La primera carga puede ser más pesada, pero la navegación posterior es muy fluida.
-- Es adecuado para aplicaciones con muchas interacciones y estados en el cliente.
-
-#### Ejemplos de tecnologías
-
-
-Las SPAs se desarrollan con <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/vue-dot-js.svg" alt="Vue" width="18" style="vertical-align:middle; margin-right:4px;"> Vue, <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/react.svg" alt="React" width="18" style="vertical-align:middle; margin-right:4px;"> React o <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/svelte.svg" alt="Svelte" width="18" style="vertical-align:middle; margin-right:4px;"> Svelte.
-
-#### Ejemplo de código — SPA (React)
-
-```js
-// ProductosList.jsx
-import { useEffect, useState } from 'react';
-
-export default function ProductosList() {
-  const [productos, setProductos] = useState([]);
-
-  useEffect(() => {
-    fetch('/api/productos')
-      .then(r => r.json())
-      .then(setProductos);
-  }, []);
-
-  return (
-    <ul>
-      {productos.map(p => <li key={p.id}>{p.nombre} — {p.precio} €</li>)}
-    </ul>
-  );
-}
-```
-
-API en Express (ejemplo):
-
-```js
-app.get('/api/productos', async (req, res) => {
-  const productos = await db.query('SELECT * FROM productos');
-  res.json(productos);
-});
-```
-
-### 3.3 SSR (Server Side Rendering)
-
-El SSR reapareció cuando los proyectos empezaron a necesitar SEO sin renunciar a la interactividad del cliente. Con SSR, el servidor genera HTML inicial y el navegador lo hidrata con JavaScript.
-
-```mermaid
-sequenceDiagram
-  participant Usuario
-  participant Navegador
-  participant SSR
-  participant API
-  participant BaseDatos
-
-  Usuario->>Navegador: visita página
-  Navegador->>SSR: GET /pagina
-  SSR->>API: solicita datos
-  API->>BaseDatos: consulta
-  BaseDatos-->>API: devuelve datos
-  API-->>SSR: JSON
-  SSR-->>Navegador: HTML renderizado
-  Navegador->>SSR: descarga JavaScript de hidratación
-  Navegador-->>Usuario: hace interactiva la página
-```
-
-#### Características de SSR
-
-- El servidor devuelve HTML listo para mostrar en la primera carga.
-- El cliente puede ejecutar JavaScript sobre ese HTML para que la página sea interactiva.
-- Mejora el SEO y el tiempo hasta el primer render.
-- Es útil para páginas con contenido dinámico y público.
-
-#### Ejemplos de tecnologías
-
-
-Se usa con frameworks como <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/next-dot-js.svg" alt="Next.js" width="18" style="vertical-align:middle; margin-right:4px;"> Next.js, <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/nuxt-dot-js.svg" alt="Nuxt" width="18" style="vertical-align:middle; margin-right:4px;"> Nuxt y <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/remix.svg" alt="Remix" width="18" style="vertical-align:middle; margin-right:4px;"> Remix.
-
-#### Ejemplo de código — SSR (Next.js)
-
-```js
-export async function getServerSideProps() {
-  const productos = await fetch('https://miapi.local/api/productos').then(r => r.json());
-  return { props: { productos } };
-}
-
-export default function ProductosPage({ productos }) {
-  return (
-    <ul>
-      {productos.map(p => <li key={p.id}>{p.nombre}</li>)}
-    </ul>
-  );
-}
-```
-
-### 3.4 Modelo híbrido
-
-El modelo híbrido combina SSR para las páginas que necesitan SEO con una experiencia SPA en las interacciones posteriores. Muchas aplicaciones modernas usan este enfoque para aprovechar lo mejor de ambos mundos.
+Para evitar estas recargas completas y ofrecer una experiencia más fluida, surge **AJAX** (*Asynchronous JavaScript and XML*). AJAX permite hacer peticiones asíncronas desde JavaScript, de forma que la página puede actualizar parte de su contenido sin recargar todo el documento.
 
 ```mermaid
 sequenceDiagram
   participant Usuario
   participant Navegador
   participant Servidor
-  participant API
-  participant BaseDatos
-
-  Usuario->>Navegador: visita ruta pública
-  Navegador->>Servidor: GET /inicio
-  Servidor->>BaseDatos: consulta datos de inicio
-  BaseDatos-->>Servidor: devuelve datos
-  Servidor-->>Navegador: HTML inicial + JS
-  Navegador->>API: peticiones dinámicas tras cargar
-  API->>BaseDatos: consulta adicional
-  API-->>Navegador: JSON para interactividad
+  Usuario->>Navegador: pulsa botón
+  Navegador->>Servidor: AJAX /api/datos
+  Servidor-->>Navegador: JSON
+  Navegador-->>Usuario: actualiza vista
 ```
 
+Algunos ejemplos típicos de AJAX incluyen formularios que se envían sin recargar la página, actualizaciones de contenido en tiempo real (como botones "me gusta" o notificaciones), autocompletado en buscadores y carga de datos adicionales al hacer scroll (*infinite scroll*).
 
-#### Características del modelo híbrido
+Entre las ventajas de AJAX destacan:
 
-- Combina el SEO de SSR con la fluidez de una SPA.
-- Permite renderizar páginas públicas y ofrecer experiencia rica en el mismo proyecto.
-- Requiere un diseño claro para decidir qué se renderiza en servidor y qué en cliente.
+- Mejor experiencia de usuario (UX), ya que la interfaz no se bloquea.
+- Reducción de ancho de banda, al no recargar recursos estáticos.
+- Permite crear aplicaciones web más interactivas y dinámicas.
 
-#### Ejemplo de código — Híbrido (HTML inicial + hidratación ligera)
+Para que una comunicación asíncrona AJAX funcione eficientemente, el cliente y el servidor necesitan un "idioma común" para intercambiar datos estructurados. Para ello, se utiliza **JSON** con interfaces **API REST**, donde el cliente hace peticiones HTTP a rutas específicas y el servidor responde con datos en formato JSON.
 
-Servidor que envía HTML inicial y pequeño script de hidratación:
-
-```html
-<!-- server-rendered index.html -->
-<div id="app"> <!-- contenido inicial ya renderizado --> </div>
-<script src="/static/app.bundle.js"></script>
+```mermaid
+graph LR
+    Cliente[Cliente / Frontend] -->|Petición HTTP: GET /api/productos| Server[Servidor / Backend]
+    Server -->|Consulta| DB[(Base de Datos)]
+    DB -->|Retorna filas| Server
+    Server -->|Respuesta HTTP 200 OK + Payload JSON| Cliente
 ```
 
-En `app.bundle.js` se puede ejecutar una hidratación mínima:
+---
 
-```js
-import { initApp } from './app';
-initApp(document.getElementById('app'));
-```
+## 5. Modelos de arquitectura de renderizado
 
-### 3.5 Headless y API-first
-
-El enfoque **headless** separa completamente el backend del frontend. El backend expone APIs y el frontend consume datos para generar la interfaz. Esto es útil cuando una misma lógica debe servir a una web, una app móvil y otros clientes.
-
-
-#### Características del headless
-
-- El backend es una API independiente.
-- El frontend puede ser una SPA, una aplicación móvil o un sitio estático.
-- Permite reutilizar la lógica de negocio en varios canales.
-
-#### Ejemplo de código — Headless (API + frontend separado)
-
-API en Express:
-
-```js
-app.get('/api/productos', async (req, res) => {
-  const productos = await db.query('SELECT * FROM productos');
-  res.json(productos);
-});
-```
-
-Frontend estático (fetch desde cualquier cliente):
-
-```js
-fetch('https://api.midominio.com/productos')
-  .then(r => r.json())
-  .then(data => renderProductos(data));
-```
-
-API en Express:
-
-```js
-app.get('/api/productos', async (req, res) => {
-  const productos = await db.query('SELECT * FROM productos');
-  res.json(productos);
-});
-```
-
-Frontend estático (fetch desde cualquier cliente):
-
-```js
-fetch('https://api.midominio.com/productos')
-  .then(r => r.json())
-  .then(data => renderProductos(data));
-```
-
-
-## 4. Arquitecturas backend
-
-El estilo de arquitectura backend describe cómo se organiza el código y los servicios dentro del servidor. Estas decisiones afectan la escalabilidad, el despliegue y el mantenimiento.
-
-### 4.1 Monolito
-
-En un monolito, toda la aplicación backend se despliega como una sola unidad. Esto facilita el inicio del proyecto y reduce la complejidad operativa al principio.
-
-Muchas aplicaciones tradicionales construidas con <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/laravel.svg" alt="Laravel" width="18" style="vertical-align:middle; margin-right:4px;"> Laravel o <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/django.svg" alt="Django" width="18" style="vertical-align:middle; margin-right:4px;"> Django son monolíticas.
-
-#### Diagrama — Monolito
+La forma en que combinamos la generación de HTML (servidor vs. cliente) y el tipo de comunicación (síncrona vs. asíncrona) da lugar a dos grandes filosofías de desarrollo web:
 
 ```mermaid
 graph TD
-  Browser -->|HTTP| WebServer[Web Server]
-  WebServer --> App[Aplicación Monolito]
-  App --> DB[(Base de Datos)]
-  App --> Cache[(Cache / Redis)]
+    subgraph MPA [MPA - Multi-Page Application]
+        M1[Navegación tradicional] --> M2[El Servidor genera todo el HTML]
+        M2 --> M3[Recarga completa en cada clic]
+    end
 ```
-
-#### Ejemplo de código — Monolito (Express)
-
-```js
-// app.js (monolito)
-const express = require('express');
-const app = express();
-
-app.get('/productos', async (req, res) => {
-  const productos = await db.query('SELECT * FROM productos');
-  res.render('productos', { productos });
-});
-
-app.get('/admin/usuarios', async (req, res) => {
-  // lógica de administración en la misma app
-});
-
-app.listen(3000);
-```
-
-### 4.2 N-capas
-
-La arquitectura de tres capas separa la presentación, la lógica de negocio y la persistencia de datos. Esta separación hace que el código sea más mantenible y escalable que un monolito simple.
-
-Un esquema típico es:
-
-- Capa de presentación: frontend o API Gateway.
-- Capa de negocio: servicios y reglas de aplicación.
-- Capa de datos: base de datos y acceso a datos.
-
-#### Diagrama — N-capas (3 capas)
 
 ```mermaid
 graph TD
-  Browser -->|HTTP| APIGateway[API Gateway / Web Server]
-  APIGateway --> Presentation[Presentación / Controllers]
-  Presentation --> Business[Servicios / Lógica de negocio]
-  Business --> Data[Acceso a datos / Repositorios]
-  Data --> DB[(Base de datos)]
+    subgraph SPA [SPA - Single-Page Application]
+        S1[Carga inicial de un único HTML y JS] --> S2[Navegación interna por JS]
+        S2 --> S3[Consumo de API REST vía AJAX]
+        S3 --> S4[Modificación dinámica del DOM]
+    end
 ```
 
-#### Ejemplo de código — N-capas (esquema)
+Vídeo recomendado:
 
-// Estructura de ficheros (ejemplo)
-```
-src/controllers/productosController.js    // recibe petición, valida y llama servicio
-src/services/productosService.js          // lógica de negocio
-src/repositories/productosRepository.js   // consultas a la base de datos
-```
+[![Aplicaciones SPA vs MPA ¿Qué son y cual elegir?](https://img.youtube.com/vi/2z0FChkphvo/0.jpg)](https://www.youtube.com/watch?v=2z0FChkphvo)
 
-Pequeño ejemplo en `productosController.js`:
+### 5.1 MPA (Multi-Page Application)
 
-```js
-import { listarProductos } from '../services/productosService.js';
+Es el modelo clásico del desarrollo web. Cada vez que el usuario navega a una nueva sección, el servidor procesa la petición, consulta la base de datos y renderiza en el servidor (SSR, Server Side Rendering) una nueva página HTML completa.
 
-export async function getProductos(req, res) {
-  const productos = await listarProductos();
-  res.json(productos);
-}
-```
+```mermaid
+sequenceDiagram
+    participant Usuario
+    participant Navegador
+    participant Servidor as Servidor (MPA)
+    participant BaseDatos as Base de datos
 
-Y en `productosService.js`:
-
-```js
-import { fetchAll } from '../repositories/productosRepository.js';
-
-export function listarProductos() {
-  return fetchAll();
-}
+    Usuario->>Navegador: accede a una sección
+    Navegador->>Servidor: solicita /productos
+    Servidor->>BaseDatos: consulta los datos
+    BaseDatos-->>Servidor: devuelve resultados
+    Servidor->>Servidor: renderiza la vista HTML
+    Servidor-->>Navegador: envía la página completa
+    Navegador-->>Usuario: muestra la nueva vista
 ```
 
+Algunas de las tecnologías backend que se usan en los servidores MPA son:
 
-### 4.3 Microservicios
+| Framework servidor | Lenguaje |
+| --- | --- |
+| Laravel ![Laravel](https://api.iconify.design/logos:laravel.svg) | PHP ![PHP](https://api.iconify.design/logos:php.svg) |
+| Spring ![Spring](https://api.iconify.design/logos:spring.svg) | Java ![Java](https://api.iconify.design/logos:java.svg) |
+| Django ![Django](https://api.iconify.design/logos:django.svg) | Python ![Python](https://api.iconify.design/logos:python.svg) |
+| Express ![Express](https://api.iconify.design/logos:express.svg) | Node.js ![Node.js](https://api.iconify.design/logos:nodejs.svg) |
+| Ruby on Rails ![Ruby on Rails](https://api.iconify.design/logos:rails.svg) | Ruby ![Ruby](https://api.iconify.design/logos:ruby.svg) |
+| ASP.NET ![ASP.NET](https://api.iconify.design/logos:dotnet.svg) | .NET ![.NET](https://api.iconify.design/logos:dotnet.svg) |
 
-Un sistema de microservicios divide la aplicación en servicios pequeños e independientes, cada uno responsable de una función concreta. Cada servicio puede desplegarse, escalarse y actualizarse por separado.
+Entre las características de MPA destacan:
 
-Se apoya en contenedores como <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/docker.svg" alt="Docker" width="18" style="vertical-align:middle; margin-right:4px;"> Docker y orquestadores como <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/kubernetes.svg" alt="Kubernetes" width="18" style="vertical-align:middle; margin-right:4px;"> Kubernetes.
+- El servidor genera el HTML de cada página.
+- El navegador recibe contenido listo para mostrar.
+- La navegación recarga el documento completo.
+- Es adecuado para sitios informativos y aplicaciones con formularios tradicionales.
 
-#### Diagrama — Microservicios
+### 5.2 SPA (Single Page Application)
+
+Es una aplicación web de una sola página. El servidor entrega un HTML sin datos inicial junto con un paquete de JavaScript (usando frameworks como React, Vue o Angular). A partir de ahí, el navegador mantiene la página activa: cuando el usuario navega, JavaScript simula el cambio de página y pide datos al backend mediante AJAX a una API REST, modificando el DOM al vuelo.
+
+En una SPA, el navegador carga una sola página inicial y el cliente maneja el enrutado y las vistas.
+
+```mermaid
+sequenceDiagram
+    participant Usuario
+    participant Frontend as Frontend (SPA)
+    participant Backend as Backend (API REST)
+    participant BaseDatos as Base de datos
+
+    Usuario->>Frontend: accede a la aplicación
+    Frontend->>Frontend: carga HTML, CSS y JS iniciales
+    Frontend->>Backend: solicita /api/productos
+    Backend->>BaseDatos: consulta los datos
+    BaseDatos-->>Backend: devuelve resultados
+    Backend-->>Frontend: responde JSON
+    Frontend->>Frontend: renderiza la interfaz
+    Frontend-->>Usuario: muestra la página actualizada
+```
+
+Algunas de las tecnologías frontend que se basan en el funcionamiento SPA son:
+
+| Framework cliente | Lenguaje |
+| --- | --- |
+| React ![React](https://api.iconify.design/logos:react.svg) | JavaScript ![JavaScript](https://api.iconify.design/logos:javascript.svg) |
+| Vue ![Vue](https://api.iconify.design/logos:vue.svg) | JavaScript ![JavaScript](https://api.iconify.design/logos:javascript.svg) |
+| Angular ![Angular](https://api.iconify.design/logos:angular-icon.svg) | TypeScript ![TypeScript](https://api.iconify.design/logos:typescript-icon.svg) |
+
+Entre las características de SPA destacan:
+
+- El servidor entrega un HTML base y scripts.
+- El cliente usa JavaScript y AJAX para actualizar contenido.
+- La primera carga puede ser más pesada.
+- Buena para aplicaciones con mucha interacción y estado en el cliente.
+
+## 5.3. Comparación de modelos
+
+| Criterio | MPA (Multi-Page Application) | SPA (Single-Page Application) |
+| --- | --- | --- |
+| Generación de HTML | En el servidor (Server-Side Rendering) | En el cliente mediante JavaScript |
+| Navegación | Recarga de página completa | Transición fluida sin recarga de navegador |
+| Manejo de Estado | El servidor gestiona el estado (Sesiones) | El cliente guarda el estado en memoria |
+| Posicionamiento SEO | Excelente de forma nativa | Requiere configuraciones adicionales |
+| Complejidad de desarrollo | Menor (ideal para la base del módulo) | Mayor (requiere separar Frontend y Backend) |
+| Casos de uso ideales | Sitios corporativos, blogs, e-commerce, paneles de gestión | Redes sociales, plataformas SaaS, dashboards muy interactivos |
+
+---
+
+## 6. Arquitecturas backend
+
+El patrón MVC tiene especial importancia en UD01, porque Laravel y otros frameworks lo usan.
+
+### 6.1 MVC (Modelo-Vista-Controlador)
+
+MVC separa responsabilidades:
+
+- **Modelo**: representa los datos y el acceso a la base de datos.
+- **Vista**: genera la plantilla HTML que ve el usuario.
+- **Controlador**: recibe la petición, pide datos al modelo y devuelve la vista.
 
 ```mermaid
 graph TD
-  User -->|HTTP| API[API Gateway]
-  API -->|/productos| ServiceProductos[Servicio Productos]
-  API -->|/usuarios| ServiceUsuarios[Servicio Usuarios]
-  ServiceProductos --> DBProductos[(DB Productos)]
-  ServiceUsuarios --> DBUsuarios[(DB Usuarios)]
-  ServiceProductos -->|pub/sub| MessageBus[(Bus de mensajes)]
+  Navegador -->|HTTP| Controlador[Controlador]
+  Controlador --> Modelo[Modelo]
+  Modelo --> DB[(Base de datos)]
+  Controlador --> Vista[Vista]
+  Vista --> Navegador
 ```
 
-#### Ejemplo de código — Microservicio (Express)
+En Laravel, el flujo típico es:
 
-```js
-// microservice-productos/index.js
-const express = require('express');
-const app = express();
+- `routes/web.php` define la ruta.
+- El controlador procesa la petición.
+- El modelo consulta la base de datos.
+- La vista devuelve HTML.
 
-app.get('/productos', async (req, res) => {
-  const productos = await db.query('SELECT * FROM productos');
-  res.json(productos);
-});
+MVC mejora el mantenimiento y facilita el trabajo colaborativo.
 
-app.listen(3001);
-```
+### 6.2 Monolito
 
-Dockerfile mínimo:
-
-```dockerfile
-FROM node:18
-WORKDIR /app
-COPY package*.json ./
-RUN npm install --production
-COPY . .
-CMD ["node", "index.js"]
-```
-
-### 4.4 Serverless
-
-La arquitectura serverless ejecuta funciones bajo demanda en la nube. El desarrollador no gestiona servidores, y paga solo por el tiempo de ejecución real.
-
-Ejemplos de plataformas serverless incluyen <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/aws.svg" alt="AWS" width="18" style="vertical-align:middle; margin-right:4px;"> AWS Lambda y <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/azure.svg" alt="Azure" width="18" style="vertical-align:middle; margin-right:4px;"> Azure Functions.
-
-#### Diagrama — Serverless
+Un monolito agrupa toda la aplicación en una sola unidad desplegada.
 
 ```mermaid
 graph TD
-  Browser -->|HTTP| APIGateway[API Gateway]
-  APIGateway --> Function1[(Función Lambda)]
-  Function1 --> DB[(Base de datos / DynamoDB)]
-  Function1 --> Storage[(S3 / Blob)]
+  Navegador -->|HTTP| Apache[Apache]
+  Apache --> App[Laravel / aplicación]
+  App --> DB[(Base de datos)]
 ```
 
-#### Ejemplo de código — Serverless (AWS Lambda)
+- Fácil de desplegar y entender en fases iniciales.
+- Ideal para proyectos pequeños o prototipos.
 
-```js
-// handler.js
-exports.handler = async (event) => {
-  // event contiene información de la petición
-  const productos = await queryProductos();
-  return {
-    statusCode: 200,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(productos),
-  };
-};
+### 6.3 N-capas
+
+La arquitectura n-capas separa presentación, lógica y datos.
+
+```mermaid
+graph TD
+  Navegador -->|HTTP| Web[Web Server]
+  Web --> Controladores[Controladores / Presentación]
+  Controladores --> Servicios[Servicios / Lógica]
+  Servicios --> Repositorios[Repositorios / Acceso a datos]
+  Repositorios --> DB[(Base de datos)]
 ```
 
+- Mejora la mantenibilidad.
+- Facilita pruebas y evolución independiente de cada capa.
 
----
+### 6.4 Microservicios
 
-## 5. Comparación de modelos y arquitecturas
+Los microservicios dividen la aplicación en servicios pequeños e independientes.
 
-Esta comparación ayuda a elegir una solución en función de los requisitos del proyecto. No existe una única respuesta correcta; la decisión depende de los objetivos concretos.
-
-| Modelo / Arquitectura | Rendimiento inicial | SEO | Interactividad | Complejidad | Uso típico |
-|---|---|---|---|---|---|
-| MPA | Alto | Muy bueno | Bajo | Bajo | Sitios informativos y formularios |
-| SPA | Medio | Medio | Muy alto | Alto | Aplicaciones internas y paneles |
-| SSR | Muy alto | Muy bueno | Alto | Medio | Comercio electrónico y contenidos dinámicos |
-| Híbrido | Muy alto | Muy bueno | Muy alto | Alto | Productos mixtos y marketing + app |
-| Headless | Medio | Depende del frontend | Alto | Alto | Plataformas multi-canal |
-| Monolito | Medio | Depende del renderizado | Medio | Bajo | MVPs y proyectos pequeños |
-| N-capas | Medio | Depende del renderizado | Medio | Medio | Aplicaciones empresariales |
-| Microservicios | Variable | Depende del renderizado | Variable | Muy alto | Sistemas grandes y distribuidos |
-| Serverless | Variable | Depende del renderizado | Variable | Alto | Procesos event-driven y picos de carga |
-
----
-
-## 6. Diseño de una aplicación real
-
-Al diseñar una aplicación, hay que responder a preguntas concretas:
-
-- ¿Necesita el contenido ser indexado por buscadores?
-- ¿La experiencia debe sentirse como una aplicación nativa?
-- ¿Cuánto control se necesita sobre el renderizado inicial?
-- ¿Existe un backend que deba servir varios clientes?
-- ¿El equipo prefiere trabajar en frontend, backend o ambos?
-
-Una buena propuesta de arquitectura se basa en estos criterios y en la naturaleza de los datos, las interacciones y el público objetivo.
-
-### 6.1 Elegir entre MPA y SPA
-
-Si el sitio es informativo y el contenido es estático, una MPA es una opción adecuada. Si la aplicación gestiona muchos estados, filtros y actualizaciones de pantalla, entonces una SPA es más natural.
-
-### 6.2 Elegir SSR o híbrido
-
-Cuando el SEO importa y también se desea una experiencia app, el SSR o el modelo híbrido son las mejores opciones. El SSR es especialmente útil en páginas públicas que deben cargarse rápido y ser indexadas correctamente.
-
-### 6.3 Elegir arquitecturas backend
-
-Un monolito puede ser suficiente en una fase inicial, pero una arquitectura n-capas facilita el crecimiento. Los microservicios se reservan para proyectos con múltiples dominios funcionales y equipos independientes. Serverless es útil para tareas concretas o cargas variables.
-
----
-
-## 7. Tecnologías en el contexto de DWES
-
-En DWES se estudian tecnologías que cubren el backend, el frontend y las APIs. A continuación se muestran tablas con los logos validados (mismo conjunto fiable que en el índice) organizadas por área.
-
-| Frontend | SSR / Híbrido | Backend |
-|---|---|---|
-| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" width="24" style="vertical-align:middle; margin-right:8px;"> React<br><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" alt="Vue" width="24" style="vertical-align:middle; margin-right:8px;"> Vue | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" alt="Next.js" width="24" style="vertical-align:middle; margin-right:8px;"> Next.js<br><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original.svg" alt="Nuxt" width="24" style="vertical-align:middle; margin-right:8px;"> Nuxt | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" width="24" style="vertical-align:middle; margin-right:8px;"> Node.js<br><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/express.svg" alt="Express" width="24" style="vertical-align:middle; margin-right:8px;"> Express |
-| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg" alt="Angular" width="24" style="vertical-align:middle; margin-right:8px;"> Angular<br><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg" alt="Svelte" width="24" style="vertical-align:middle; margin-right:8px;"> Svelte | <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/remix.svg" alt="Remix" width="24" style="vertical-align:middle; margin-right:8px;"> Remix<br><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/svelte.svg" alt="SvelteKit" width="24" style="vertical-align:middle; margin-right:8px;"> SvelteKit | <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/django.svg" alt="Django" width="24" style="vertical-align:middle; margin-right:8px;"> Django<br><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/laravel.svg" alt="Laravel" width="24" style="vertical-align:middle; margin-right:8px;"> Laravel |
-
-Estas tablas usan los iconos validados en el índice y proporcionan una referencia visual consistente para los alumnos.
-
-### 7.1 Backend y API
-
-En el backend se define la estructura de datos, las rutas y las reglas de negocio. Para una API REST se crean endpoints que devuelven JSON y aceptan datos desde el cliente.
-
-Ejemplo de ruta en backend:
-
-```js
-app.get("/api/productos", async (req, res) => {
-  const productos = await db.query("SELECT * FROM productos");
-  res.json(productos);
-});
+```mermaid
+graph TD
+  Usuario -->|HTTP| Gateway[API Gateway]
+  Gateway --> Servicio1[Servicio 1]
+  Gateway --> Servicio2[Servicio 2]
+  Servicio1 --> DB1[(Base de datos 1)]
+  Servicio2 --> DB2[(Base de datos 2)]
 ```
 
-### 7.2 Frontend y datos
+- Apto para sistemas grandes y equipos separados.
+- Requiere más complejidad operativa.
 
-El frontend consulta la API, recibe JSON y muestra los datos en la interfaz. Un componente puede solicitar la información y construir la vista con HTML y CSS en el navegador.
+### 6.5 Serverless
 
-### 7.3 SEO y renderizado
+Serverless ejecuta funciones bajo demanda sin gestionar servidores.
 
-Para que una página se indexe bien, conviene que el servidor entregue HTML con contenido relevante desde la primera petición. Los modelos SSR y MPA son los más adecuados para este objetivo.
+```mermaid
+graph TD
+  Navegador -->|HTTP| APIGateway[API Gateway]
+  APIGateway --> Function[Función serverless]
+  Function --> DB[(Base de datos / almacenamiento)]
+```
 
----
-
-## 8. Valores y criterios de diseño
-
-Los criterios más importantes al elegir una arquitectura son:
-
-- **Rendimiento**: tiempo de carga, tamaño de recursos y uso de caché.
-- **SEO**: capacidad de indexación y metadatos adecuados.
-- **Mantenibilidad**: claridad del código y separación de responsabilidades.
-- **Escalabilidad**: posibilidad de crecer en usuarios o servicios.
-- **Seguridad**: protección de datos y control de acceso.
-- **Experiencia de usuario**: fluidez, accesibilidad y navegación intuitiva.
-
-Un diseño equilibrado busca un buen rendimiento sin sacrificar la calidad de la experiencia y la seguridad.
-
-### 8.1 Caché y experiencia
-
-El uso inteligente de caché reduce el tiempo de carga y el número de peticiones al servidor. Un navegador puede almacenar recursos estáticos, y un CDN puede servirlos desde un nodo cercano al usuario.
-
-### 8.2 Cookies y sesiones
-
-Las cookies permiten conservar datos de sesión y preferencias en el navegador. El servidor usa esas cookies para identificar al usuario y mantener el estado de su sesión.
-
-### 8.3 Seguridad y HTTPS
-
-HTTPS protege los datos en tránsito. Un sitio moderno siempre debe usar HTTPS y políticas de seguridad como Content Security Policy para reducir riesgos.
+- Pago por uso real.
+- Útil para tareas puntuales o cargas variables.
+- Menos control sobre el servidor.
 
 ---
 
-## 9. Aplicaciones prácticas y casos reales
+## 7. Entorno de desarrollo
 
-### 9.1 Comercio electrónico
+En UD01 el entorno preferido es:
 
-Un sitio de comercio electrónico suele requerir SEO para las fichas de producto y una experiencia rápida de compra. El modelo SSR o híbrido es frecuente en estos casos.
+- **Backend**: PHP + Laravel
+- **Servidor web**: Apache
+- **Base de datos**: MySQL/MariaDB o SQLite en desarrollo
+- **Editor**: VSCode
 
-### 9.2 Dashboard y administración
+```mermaid
+graph LR
+  VSCode --> PHP[PHP / Laravel]
+  PHP --> Apache[Apache]
+  Apache --> DB[(Base de datos)]
+  VSCode --> Git[Control de versiones]
+```
 
-Un panel de administración con muchas interacciones y actualizaciones en tiempo real encaja mejor en una SPA o en un frontend headless. Las APIs REST proporcionan datos de forma consistente.
-
-### 9.3 Portal de contenidos
-
-Un portal de contenidos se beneficia de MPA o SSR porque el SEO y el rendimiento inicial son críticos. Este tipo de proyecto también puede usar un CMS headless para separar contenido y presentación.
-
-### 9.4 Aplicación móvil y web
-
-Cuando la misma lógica debe servir una app móvil y una web, el enfoque headless con APIs REST es una opción natural. El backend expone datos que consumen múltiples clientes.
+Laravel es un framework MVC que encaja bien con el enfoque de este módulo.
 
 ---
 
-## 10. Conclusión
+## 8. Conclusión
 
-Esta propuesta presenta los fundamentos necesarios para entender los modelos de renderizado, las arquitecturas backend y las decisiones técnicas que influyen en una aplicación web. Con estos conceptos, el alumno puede distinguir entre MPA, SPA, SSR, híbrido y headless, así como entre monolitos, n-capas, microservicios y serverless.
-
-El material está diseñado para ayudar a construir una visión sólida antes de pasar a ejercicios y prácticas específicas en el módulo UD01.
+Esta propuesta simplifica los modelos de renderizado a los tres más relevantes para UD01 y da importancia al patrón MVC en las arquitecturas backend. El objetivo es ofrecer una base clara para distinguir entre aplicaciones estáticas y dinámicas, entender cuándo usar cada modelo y cómo organizar el backend con Laravel y VSCode.
