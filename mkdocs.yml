@@ -23,13 +23,13 @@ theme:
       toggle:
           icon: material/brightness-4
           name: Canvia a mode clar
-   logo: img/favicon.ico
+   logo: img/pato_logo_3d.ico
    favicon: img/favicon.ico
 
 nav:
     - Home: index.md
     - UF01. Introducción al desarrollo web:
-      - T1.1. Arquitecturas web servidor: u01/u1.1.md
+      - R1.1. Arquitecturas web servidor: u01/r1.1.md
       - A1.1. Actividades: u01/a1.1.md
     - UF02. Introducción a PHP: u02/index.md
     - UF03. Generación dinámica y plantillas: u03/index.md
