@@ -23,24 +23,24 @@ theme:
       toggle:
           icon: material/brightness-4
           name: Canvia a mode clar
-   logo: img/pato_logo_3d.ico
-   favicon: img/favicon.ico
+   logo: assets/img/pato_logo_3d.ico
+   favicon: assets/img/favicon.ico
 
 nav:
     - Home: index.md
-    - UF01. Introducción al desarrollo web:
-      - R1.1. Arquitecturas web servidor: u01/r1.1.md
-      - A1.1. Actividades: u01/a1.1.md
-    - UF02. Introducción a PHP: u02/index.md
-    - UF03. Generación dinámica y plantillas: u03/index.md
-    - UF04. Formularios, estado y sesiones: u04/index.md
-    - UF05. Arquitectura MVC y separación de lógica: u05/index.md
-    - UF06. Acceso a bases de datos y CRUD: u06/index.md
-    - UF07. Servicios Web y APIs REST: u07/index.md
-    - UF08. Integración con cliente y aplicaciones híbridas: u08/index.md
-    - UF09. Proyecto final y despliegue: u09/index.md
+    - Unidad 1. Introducción al desarrollo web:
+      - 1. Arquitecturas web servidor: u01-introduccion-desarrollo-web/r01-arquitecturas-web-servidor.md
+      - Actividades: u01-introduccion-desarrollo-web/a01.md
+    - Unidad 2. Introducción a PHP: u02/index.md
+    - Unidad 3. Generación dinámica y plantillas: u03/index.md
+    - Unidad 4. Formularios, estado y sesiones: u04/index.md
+    - Unidad 5. Arquitectura MVC y separación de lógica: u05/index.md
+    - Unidad 6. Acceso a bases de datos y CRUD: u06/index.md
+    - Unidad 7. Servicios Web y APIs REST: u07/index.md
+    - Unidad 8. Integración con cliente y aplicaciones híbridas: u08/index.md
+    - Unidad 9. Proyecto final y despliegue: u09/index.md
 extra_css:
-  - css/style.css
+  - assets/css/style.css
 extra_templates:
 plugins:
   - search
