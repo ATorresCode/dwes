@@ -30,8 +30,12 @@ nav:
     - Home: index.md
     - Unidad 1. Introducción al desarrollo web:
       - 1. Arquitecturas web servidor: u01-introduccion-desarrollo-web/r01-arquitecturas-web-servidor.md
-      - Actividades: u01-introduccion-desarrollo-web/a01.md
-    - Unidad 2. Introducción a PHP: u02/index.md
+      - A1. Actividades: u01-introduccion-desarrollo-web/a01.md
+    - Unidad 2. Introducción a PHP:
+      - 1. Introducción a PHP: u02-introduccion-php/r01.md
+      - A1. Actividades: u02-introduccion-php/a01.md
+      - A2. Actividades de refuerzo: u02-introduccion-php/a02-refuerzo.md
+      - A3. Actividades de ampliación: u02-introduccion-php/a03-ampliacion.md
     - Unidad 3. Generación dinámica y plantillas: u03/index.md
     - Unidad 4. Formularios, estado y sesiones: u04/index.md
     - Unidad 5. Arquitectura MVC y separación de lógica: u05/index.md
