@@ -2,13 +2,19 @@
 
 ## Actividad 1: Hola Mundo con funciones · ★☆☆☆☆
 
+🔴⚫⚫⚫⚫
+
 Realizar un script PHP sencillo que utilice una función para mostrar por pantalla el texto "Hola mundo".
 
 ## Actividad 2: Lista desordenada numérica · ★☆☆☆☆
 
+🔴⚫⚫⚫⚫
+
 Realizar un script PHP que muestre todos los números enteros del 1 al 10 estructurados dentro de una lista desordenada HTML.
 
 ## Actividad 3: Múltiplo de 3 · ★★☆☆☆
+
+🔴🔴⚫⚫⚫
 
 Realizar un script PHP que genere un número aleatorio mediante funciones nativas de PHP e indique mediante una condición si dicho número es múltiplo de 3 o no.
 
