@@ -41,6 +41,7 @@ nav:
       - P2. Ampliación de la práctica: u02-introduccion-php/p02-ampliacion-deck.md
     - Unidad 3. Programación orientada a objetos:
       - R1. Introducción a la POO: u03-poo/r01.md
+      - A1. Actividades: u03-poo/a01.md
     - Unidad 4. Formularios, estado y sesiones: u04/index.md
     - Unidad 5. Arquitectura MVC y separación de lógica: u05/index.md
     - Unidad 6. Acceso a bases de datos y CRUD: u06/index.md
